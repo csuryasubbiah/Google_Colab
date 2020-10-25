@@ -1,0 +1,407 @@
+---
+title: "Quantitive Data Humanism with Pokemon"
+author: "Nik Bear Brown"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette: default
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Quantitive Data Humanism (QDH) with Pokemon
+
+In this project I will explore extending the “data humanism” of Giorgia Lupi which is a reaction against the computer-generated, harsh-toned bar graphs, pie charts that tend to diminish rather than peak interest in a visualization. Giorgia Lupi describes data humanism in her manifesto [Data Humanism, The Revolution will be Visualized](http://giorgialupi.com/data-humanism-my-manifesto-for-a-new-data-wold)
+
+<img style="margin:40px 0 20px 0;" src="https://raw.githubusercontent.com/nikbearbrown/Google_Colab/master/images/GL_Data_Humanism.png" />
+
+Image credit: [giorgialupi.com](http://giorgialupi.com/)
+
+## Quantitive Data Humanism
+
+The “noise” in the sketchy style of can be used to convey important information in a graph. In particular, it naturally fits with representing uncertainty.
+
+This article is an attempt to play with mapping the rough “sketchiness” of data humanism to common charts, like bar charts and bubble charts, where the quantitative display of uncertainty is usually not shown, often because the it is not obvious how to visually display uncertainty in many charts.
+
+
+## Quantitive Data Humanism Parameters
+
+I will use the following parameters to extend ggpolt plots with varying degrees of sketchiness.
+
+
+
+### Fill Style — `fill_style`   
+
+Categorical variable with the following values: _solid_, _hachure_, _cross,hatch_, _zigzag_, and _dots_.
+
+The default is _solid_.
+
+### Fill Weight — `fill_weight`
+
+Continuous positive variable that reflects how densely a color of applied. Think of one coat of paint rather than 5 coats of paint.
+
+The default is `4`.
+
+### Roughness — `roughness`
+
+Continuous positive variable that reflects how rough the element should be.
+
+The default is `1.5`.
+
+## Bowing — `bowing`
+
+Continuous positive variable that reflects how much the axis are bowed.
+
+The default is `1`.
+
+
+## Gap — `gap` 
+
+Continuous positive variable that reflects the gap between each hachure line.
+
+The default is `6`.
+
+## Gap Noise — `gap_noise`
+
+A percentage of noise to apply on the `gap` value. Use a value between `0` and `1`. A `gap_noise` of `1` means that deviation up to `2 * gap` are allowed.
+
+The default is `0`.
+
+## Angle — `angle` 
+
+The angle in degrees of the hachure lines ranging from `0` and `360` degrees.
+
+## Angle Noise — `angle_noise`
+
+The `angle_noise` is a value between `0` and `1`, equivalent to the percentage of possible deviation from the set `angle`. An `angle_noise` of `1` means that deviation up to `90°` are allowed.  
+
+The default is `0`.
+
+
+```{r imports, include = FALSE}
+library(ggrough) # sketchiness library
+library(dplyr) # data munging library
+library(ggplot2) # plot library
+library(showtext) # font library
+library(scales) # show the colors
+```
+
+## Pokemon Data from Kaggle
+
+I am using the Pokemon data from Kaggle becuase it is fun [https://www.kaggle.com/rounakbanik/pokemon](https://www.kaggle.com/rounakbanik/pokemon)
+
+This dataset contains information on all 802 Pokemon from all Seven Generations of Pokemon. The information contained in this dataset include Base Stats, Performance against Other Types, Height, Weight, Classification, Egg Steps, Experience Points, Abilities, etc. The information was scraped from [https://serebii.net/](http://serebii.net)
+
+
+## Using `ggrough` to create a sketchy humanisitic style
+
+I will use the library ggrough to convert ggplot charts into a humanistic style. Note that this library was last updated years ago and has many bugs. It seems abandoned. It is an important library and needs to be rewritten and updated. A python version also needs to be created.
+
+`ggrough` is an R package that converts your [`ggplot2`](http://ggplot2.tidyverse.org) plots to rough/sketchy charts, using the excellent javascript [`roughjs`](http://roughjs.com) library.
+
+In this article, I will only show one example of its common use as it involves just adding a couple of lines of code after a ggplot2 graph is created. To show how it was used to create all of the graphs shown is beyond the scope of this article.
+
+## How to Install
+
+One needs to use `devtools` to install `ggrough`
+```{r, eval=FALSE, echo=TRUE}
+install.packages("devtools") # if you have not installed "devtools" package
+devtools::install_github("xvrdm/ggrough")
+```
+
+The other packages can be installed using `install.packages`. 
+
+```{r, eval=FALSE}
+install.packages(c("ggplot2", "dplyr", "showtext","scales"))
+```
+
+
+## Playful Kids Color Scheme 
+
+I want to play with playful "kids art" style colors, but don't want to rewrite the code in order to make changes, so I created a color swatch.
+
+```{r, echo=TRUE}
+colorsKids <- c("#9B1E33", "#EEBD00", "#6A953F", "#9A6233", "#69359C", "#F7B0BE")
+show_col(colorsKids, labels = F, borders = NA)
+```
+
+## Loading the Pokemon Data
+
+The Pokemon data has a nice mix of categorical, continuous and Boolean data so many standard charts can be created. I will extend this data set with some time-series, uncertainty information and image data in the future to create a standard data set for all kinds of QDH visualization.
+
+
+```{r,  echo=TRUE}
+set.seed(5)
+pokemon <- read.csv("Pokemon.csv")
+
+pokemon %>% head(5)
+```
+
+## A Simple Histogram Example
+
+I will use a histogram to show how a simple computer-generated, harsh-toned graph can be converted into a playful humanistic style where the roughness and sketchiness of the graph is quantitatively determined by parameters. From here on when I use code to create humanistic graphs whose roughness and sketchiness is determined by parameters I will refer to this as Quantitive Data Humanism or QDH.
+
+
+```{r,  echo=TRUE}
+
+# Classic ggplot part
+g1 <- pokemon %>% 
+  ggplot(aes(x = HP)) +
+  geom_histogram(bins = 22, fill = colorsKids[5], alpha = 0.6, color = colorsKids[1]) +
+geom_vline(aes(xintercept=mean(HP, na.rm=T)), color="red", linetype="dashed", size=1) +
+  ggtitle("Pokemon Hit Point Distribution") +
+  xlab("Pokemon HP") +  
+  ylab("Pokemon HP Count")  
+g1
+ggsave(file="g1.svg")
+```  
+ 
+ _This graph shows that nearly all Pokemon have HP around the mean but there are some with massive HP_   
+ 
+## Handwritten Tyepfaces Using _showtext_ and Google Fonts
+
+From a design perspective using handwritten tyepfaces with sketchy graphs tends to work better so we will show how to do this. For this we will use _Google fonts_.
+
+To use Google fonts, try the fantastic [`showtext`](https://github.com/yixuan/showtext) package.
+  
+```{r,  echo=TRUE}
+## Loading Google fonts (https://fonts.google.com/)
+font_add_google("Gochi Hand", "gochi")
+## Automatically use showtext to render text
+showtext_auto()
+# Classic ggplot part
+g2 <- pokemon %>% 
+  ggplot(aes(x = Attack)) +
+  geom_histogram(bins = 22, fill = colorsKids[5], alpha = 0.6, color = "grey35") +
+  ggtitle("Pokemon Attack Distribution") +
+  xlab("Pokemon Attack") +  
+  ylab("Pokemon Attack Count")  +
+ theme(
+plot.title = element_text(family = "gochi", size=14, face="bold.italic"),
+axis.title.x = element_text(family = "gochi", size=14, face="bold"),
+axis.title.y = element_text(family = "gochi", size=14, face="bold")
+)  
+g2
+ggsave(file="g2.svg")
+```  
+
+_Handwritten Fonts already add a fun aspect to a graph_  
+
+## Sketchy Style with ggRough 
+
+Note that `ggRough` is a broken library with many bugs that needs to be rewritten. In theory, and after the library is rewritten, it will work as below. In practice, generating all of the graphs shown in this article is more complicated and beyond this articles scope. After this only the `ggplot2` portion of the Pokemon graph code will be shown. 
+
+```{r,  echo=TRUE}
+# ggRough part
+options <- list(
+  Background=list(roughness=4),
+  GeomCol=list(fill_style="hachure",fill_weight=2, angle=60,angle_noise=0.1, bowing=0, roughness=6))
+
+
+get_rough_chart(g2, options)
+```
+
+_A couple lines of code can add a humanistic style to a graph_  
+
+## Gallery
+
+For the rest of this article I will show the effect of the parameters on common EDA graphs and not the code details of how the graphs where created. The toolset needs to be updated, refactored and rebuilt in order to make it easy for data visualization in R and python to manipulate the following parameters: fill_style, fill_weight, roughness, bowing, gap, gap_noise, angle, and angle_noise. Potentially many other parameters could be added. In 1984, Cleveland and his colleague Robert McGill published the seminal paper that created a general hierarchy for the types of data people most accurately understand:
+
+* Position along a common scale (bar chart, dot plots)  
+* Positions along nonaligned, identical scales (small multiples)  
+* Length, direction, angle (pie chart)  
+* Area (treemap)   
+* Volume, curvature (3-D bar charts, area charts)  
+* Shading, color saturation (heat maps, choropleth maps)   
+
+Creating QDH libraries for R and python allow designers much more control over shading, color saturation, angle, etc.. This would allow designers to more easily explore which types of graphical elements convey the most information to humans. 
+
+See [Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods
+William S. Cleveland and Robert McGill
+](https://www.jstor.org/stable/2288400)   
+
+
+## Poke Theme
+
+I made a custom Poke theme to make styling more consitent.
+
+```{r, echo=TRUE}
+
+# Save the custom Poke theme
+poke_theme <- theme(
+        text = element_text(color = "grey35"),
+        plot.title = element_text(size = 25, family = "gochi", face = "bold"),
+        axis.title = element_text(size = 20),
+        axis.text = element_text(size = 15),
+        axis.line = element_line(size = 1.2),
+        legend.box.background = element_rect(color = "grey75", size = 1),
+        legend.box.margin = margin(t = 5, r = 5, b = 5, l = 5),
+        legend.title = element_text(face = "bold", size = 15),
+        legend.text = element_text(size=13))
+```
+
+#### Blueprint Style Bar Chart
+
+This blueprint style bar chart shows the distribution of Pokemon by secondary type.
+
+```{r,  echo=TRUE}
+font_add_google("Gochi Hand", "gochi")
+font_add_google("Schoolbell", "bell")
+fface<-"gochi"
+
+# Classic ggplot part
+g3 <- count(pokemon, Type.1) %>%
+  ggplot(aes(Type.1, n)) +
+  geom_col(fill="#FCFBE4") + # Snow White
+  ggtitle("Pokemon by Type.1") +
+  xlab("Type.1") +  
+  ylab("Type.1 Count")  + 
+   theme(
+panel.background = element_rect(fill="#2E3561"), # Blue Print Blue     
+plot.title = element_text(family = "gochi", size=14, face="bold.italic"),
+axis.title.x = element_text(family = "gochi", size=14, face="bold"),
+axis.title.y = element_text(family = "gochi", size=14, face="bold")
+)  
+ggsave(file="g3.svg")
+g3
+```
+
+_The distribution of Pokemon by secondary type shows that some type are rare and others are common_
+
+#### Correlation of Pokemon Attack and Defense
+
+This scatter plot shows correlation of Pokemon attack and defense. Some Pokemon are all attack and no defense and vice-versa but most have highly correlated attack and defense. 
+
+```{r,  echo=TRUE}
+font_add_google("Gochi Hand", "gochi")
+font_add_google("Schoolbell", "bell")
+fface<-"bell"
+g5<-pokemon %>% 
+  ggplot(aes(x =Defense, y = Attack)) +
+
+  geom_point(aes(color = as.factor(Generation), shape = Legendary), size = 5, stroke = 1.5, alpha = 0.5) +
+  theme_classic() +
+  labs(x = "Defense", y = "Attack", title = "Basic Plot", color = "Generation", shape = "Legendary",
+       subtitle = "Scatter Plot", caption = "Kaggle:Pokemon Dataset") +
+
+  poke_theme +
+  scale_color_manual(values = colorsKids) +
+
+  scale_x_continuous(breaks = seq(0, 250, 25)) +
+  scale_y_continuous(breaks = seq(0, 200, 25)) + 
+   theme(
+plot.title = element_text(family = fface, size=14, face="bold.italic"),
+axis.title.x = element_text(family = fface, size=14, face="bold"),
+axis.title.y = element_text(family = fface, size=14, face="bold")
+)  
+g5
+
+ggsave(file="g5QDH.svg")
+```
+
+ 
+_Most Pokemon have highly correlated attack and defense_  
+
+### Special Attack versus HP
+
+Pokemon special attack versus HP is mostly uncorrelated. 
+
+```{r,  echo=TRUE}
+font_add_google("Gochi Hand", "gochi")
+font_add_google("Schoolbell", "bell")
+fface<-"gochi"
+g9<-pokemon %>% 
+  filter(Legendary == "True") %>% 
+  arrange(desc(Total)) %>% 
+  head(150) %>%
+  
+  ggplot(aes(x = HP, y = Sp..Atk)) +
+  geom_point(aes(color = HP, size = Sp..Atk*0.3), alpha = 0.7) +
+  scale_size(range = c(1, 20)) +
+  theme_bw() +
+  labs(x = "HP", y = "Special Attack", title = "Bubble Plot", color = "HP", size = "Special Attack",
+       subtitle = "Scatter Plot", caption = "Kaggle:Pokemon Dataset") +
+  poke_theme +
+  theme(panel.border = element_rect(color = "grey35")) +
+  scale_color_gradient2(low = colorsKids[5], mid = colorsKids[2], high = colorsKids[1],
+                        midpoint = 100) + 
+   theme(
+plot.title = element_text(family = fface, size=14, face="bold.italic"),
+axis.title.x = element_text(family = fface, size=14, face="bold"),
+axis.title.y = element_text(family = fface, size=14, face="bold")
+)  
+g9
+ggsave(file="g9QDH.svg")
+```
+ 
+ _Pokemon special attack versus HP is mostly uncorrelated_
+
+### Distribution of Pokemon by Primary Type
+
+This bar chart shows the distribution of Pokemon by primary type. Like secondary type some Pokemon types are rare and others are common.
+
+```{r,  echo=TRUE}
+font_add_google("Gochi Hand", "gochi")
+font_add_google("Schoolbell", "bell")
+fface<-"gochi"
+# How many Pokémon of each primary type are there?
+g12<-ggplot(pokemon, aes(x=Type.1)) + 
+  geom_bar(fill=colorsKids[1], colour="black") +
+  labs(x="Type 1", y="Frequency",
+       title="How many Pokémon of each primary type there are?") +
+  theme_bw() +
+  theme(axis.text.x=element_text(angle=45, hjust=1)) + 
+   theme(
+plot.title = element_text(family = fface, size=14, face="bold.italic"),
+axis.title.x = element_text(family = fface, size=14, face="bold"),
+axis.title.y = element_text(family = fface, size=14, face="bold")
+)  
+g12
+ggsave(file="g12QDH.svg")
+```
+ 
+ 
+_Like secondary type some Pokemon types are rare and others are common_  
+
+
+### Distribution of Total Points versus Primary Type 
+
+The boxplot showing the distribution of total points versus primary type shows that there are some significantly better Pokemon primary types than others. 
+
+```{r,  echo=TRUE}
+font_add_google("Gochi Hand", "gochi")
+font_add_google("Schoolbell", "bell")
+fface<-"gochi"
+g16<- ggplot(pokemon, aes(x=Type.1, y = Total)) + geom_boxplot(outlier.size=0) + geom_jitter(width=0.2,alpha=0.4,aes(color = Legendary)) + theme(axis.text.x = element_text(angle = 90)) + 
+labs(title = 'Box Plot of Total Points vs Pokemon Type.1') + 
+   theme(
+plot.title = element_text(family = fface, size=14, face="bold.italic"),
+axis.title.x = element_text(family = fface, size=14, face="bold"),
+axis.title.y = element_text(family = fface, size=14, face="bold")
+)  
+g16
+ggsave(file="g16QDH.svg")
+```
+ 
+ _There are some significantly better Pokemon primary types than others_
+ 
+## Conclusion
+
+In this article I explored the idea of extending the “data humanism” of Giorgia Lupi by using the roughness and sketchiness to quantitively display additional information. I call this approach _Quantitive Data Humanism_ or _QDH_. The “noise” in the sketchy style of can be used to coney important information in a graph. In particular, it naturally fits with conveying uncertainty.
+QDH has the benefit of not only dimishing the stylistic issues with computer-generated, harsh-toned graphs, it has the potential to add many additional parameters that can reflect statistical properties in the underlying data.
+
+
+## Design Notes
+
+I'd like this to be a _Medium_ and _arXiv _ article in the not too distant future. The design is intentionally kept simple so it can essentially be cut and pasted into [medium.com](https://medium.com) and fit seemlessly and easily adpated to the [https://arxiv.org/](https://arxiv.org) LaTeX format.  
+
+
+```
+
+
+
+
+```
