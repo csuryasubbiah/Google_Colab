@@ -3,9 +3,9 @@ title: "Quantitive Data Humanism with Pokemon"
 author: "Nik Bear Brown"
 date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_vignette: default
-  word_document: default
   html_document: default
+  word_document: default
+  rmarkdown::html_vignette: default
 ---
 
 ```{r setup, include=FALSE}
@@ -20,65 +20,12 @@ In this project I will explore extending the “data humanism” of Giorgia Lupi
 
 Image credit: [giorgialupi.com](http://giorgialupi.com/)
 
-## Quantitive Data Humanism
+## Quantitive Data Humanism (QDH)  
 
 The “noise” in the sketchy style of can be used to convey important information in a graph. In particular, it naturally fits with representing uncertainty.
 
 This article is an attempt to play with mapping the rough “sketchiness” of data humanism to common charts, like bar charts and bubble charts, where the quantitative display of uncertainty is usually not shown, often because the it is not obvious how to visually display uncertainty in many charts.
 
-
-## Quantitive Data Humanism Parameters
-
-I will use the following parameters to extend ggpolt plots with varying degrees of sketchiness.
-
-
-
-### Fill Style — `fill_style`   
-
-Categorical variable with the following values: _solid_, _hachure_, _cross,hatch_, _zigzag_, and _dots_.
-
-The default is _solid_.
-
-### Fill Weight — `fill_weight`
-
-Continuous positive variable that reflects how densely a color of applied. Think of one coat of paint rather than 5 coats of paint.
-
-The default is `4`.
-
-### Roughness — `roughness`
-
-Continuous positive variable that reflects how rough the element should be.
-
-The default is `1.5`.
-
-## Bowing — `bowing`
-
-Continuous positive variable that reflects how much the axis are bowed.
-
-The default is `1`.
-
-
-## Gap — `gap` 
-
-Continuous positive variable that reflects the gap between each hachure line.
-
-The default is `6`.
-
-## Gap Noise — `gap_noise`
-
-A percentage of noise to apply on the `gap` value. Use a value between `0` and `1`. A `gap_noise` of `1` means that deviation up to `2 * gap` are allowed.
-
-The default is `0`.
-
-## Angle — `angle` 
-
-The angle in degrees of the hachure lines ranging from `0` and `360` degrees.
-
-## Angle Noise — `angle_noise`
-
-The `angle_noise` is a value between `0` and `1`, equivalent to the percentage of possible deviation from the set `angle`. An `angle_noise` of `1` means that deviation up to `90°` are allowed.  
-
-The default is `0`.
 
 
 ```{r imports, include = FALSE}
@@ -135,7 +82,7 @@ The Pokemon data has a nice mix of categorical, continuous and Boolean data so m
 
 ```{r,  echo=TRUE}
 set.seed(5)
-pokemon <- read.csv("Pokemon.csv")
+pokemon <- read.csv("data/Pokemon.csv")
 
 pokemon %>% head(5)
 ```
@@ -148,15 +95,14 @@ I will use a histogram to show how a simple computer-generated, harsh-toned grap
 ```{r,  echo=TRUE}
 
 # Classic ggplot part
-g1 <- pokemon %>% 
-  ggplot(aes(x = HP)) +
-  geom_histogram(bins = 22, fill = colorsKids[5], alpha = 0.6, color = colorsKids[1]) +
-geom_vline(aes(xintercept=mean(HP, na.rm=T)), color="red", linetype="dashed", size=1) +
-  ggtitle("Pokemon Hit Point Distribution") +
-  xlab("Pokemon HP") +  
-  ylab("Pokemon HP Count")  
+g1<- pokemon %>% 
+  ggplot(aes(x = Attack)) +
+  geom_histogram(bins = 22, fill = colorsKids[5], alpha = 0.6, color = "grey35") +
+  ggtitle("Pokemon Attack Distribution") +
+  xlab("Pokemon Attack") +  
+  ylab("Pokemon Attack Count")   
 g1
-ggsave(file="g1.svg")
+ggsave(file="g1_QDH.svg")
 ```  
  
  _This graph shows that nearly all Pokemon have HP around the mean but there are some with massive HP_   
@@ -185,7 +131,7 @@ axis.title.x = element_text(family = "gochi", size=14, face="bold"),
 axis.title.y = element_text(family = "gochi", size=14, face="bold")
 )  
 g2
-ggsave(file="g2.svg")
+ggsave(file="g2_QDH.svg")
 ```  
 
 _Handwritten Fonts already add a fun aspect to a graph_  
@@ -205,6 +151,60 @@ get_rough_chart(g2, options)
 ```
 
 _A couple lines of code can add a humanistic style to a graph_  
+
+
+## Quantitive Data Humanism Parameters
+
+I will use the following parameters to extend ggpolt plots with varying degrees of sketchiness.
+
+
+
+### Fill Style — `fill_style`   
+
+Categorical variable with the following values: _solid_, _hachure_, _cross,hatch_, _zigzag_, and _dots_.
+
+The default is _solid_.
+
+### Fill Weight — `fill_weight`
+
+Continuous positive variable that reflects how densely a color of applied. Think of one coat of paint rather than 5 coats of paint.
+
+The default is `4`.
+
+### Roughness — `roughness`
+
+Continuous positive variable that reflects how rough the element should be.
+
+The default is `1.5`.
+
+## Bowing — `bowing`
+
+Continuous positive variable that reflects how much the axis are bowed.
+
+The default is `1`.
+
+
+## Gap — `gap` 
+
+Continuous positive variable that reflects the gap between each hachure line.
+
+The default is `6`.
+
+## Gap Noise — `gap_noise`
+
+A percentage of noise to apply on the `gap` value. Use a value between `0` and `1`. A `gap_noise` of `1` means that deviation up to `2 * gap` are allowed.
+
+The default is `0`.
+
+## Angle — `angle` 
+
+The angle in degrees of the hachure lines ranging from `0` and `360` degrees.
+
+## Angle Noise — `angle_noise`
+
+The `angle_noise` is a value between `0` and `1`, equivalent to the percentage of possible deviation from the set `angle`. An `angle_noise` of `1` means that deviation up to `90°` are allowed.  
+
+The default is `0`.
 
 ## Gallery
 
