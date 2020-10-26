@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 In this project I will explore extending the “data humanism” of Giorgia Lupi which is a reaction against the computer-generated, harsh-toned bar graphs, pie charts that tend to diminish rather than peak interest in a visualization. Giorgia Lupi describes data humanism in her manifesto [Data Humanism, The Revolution will be Visualized](http://giorgialupi.com/data-humanism-my-manifesto-for-a-new-data-wold)
 
-<img style="margin:40px 0 20px 0;" src="https://raw.githubusercontent.com/nikbearbrown/Google_Colab/master/images/GL_Data_Humanism.png" />
+<img style="margin:40px 0 20px 0;" src="https://raw.githubusercontent.com/nikbearbrown/Google_Colab/master/QDH/graphs/GL_Data_Humanism.png" />
 
 Image credit: [giorgialupi.com](http://giorgialupi.com/)
 
@@ -26,7 +26,7 @@ The “noise” in the sketchy style of can be used to convey important informat
 
 This article is an attempt to play with mapping the rough “sketchiness” of data humanism to common charts, like bar charts and bubble charts, where the quantitative display of uncertainty is usually not shown, often because the it is not obvious how to visually display uncertainty in many charts.
 
-
+<img style="margin:40px 0 20px 0;" src="https://raw.githubusercontent.com/nikbearbrown/Google_Colab/master/QDH/graphs/QDH_Banner.png" />
 
 ```{r imports, include = FALSE}
 library(ggrough) # sketchiness library
@@ -102,7 +102,7 @@ g1<- pokemon %>%
   xlab("Pokemon Attack") +  
   ylab("Pokemon Attack Count")   
 g1
-ggsave(file="g1_QDH.svg")
+# ggsave(file="g1_QDH.svg")
 ```  
  
  _This graph shows that nearly all Pokemon have HP around the mean but there are some with massive HP_   
@@ -131,10 +131,13 @@ axis.title.x = element_text(family = "gochi", size=14, face="bold"),
 axis.title.y = element_text(family = "gochi", size=14, face="bold")
 )  
 g2
-ggsave(file="g2_QDH.svg")
+# ggsave(file="g2_QDH.svg")
 ```  
 
 _Handwritten Fonts already add a fun aspect to a graph_  
+
+
+<img style="margin:40px 0 20px 0;" src="https://raw.githubusercontent.com/nikbearbrown/Google_Colab/master/QDH/graphs/QDH_Google_Font.png" />
 
 ## Sketchy Style with ggRough 
 
@@ -152,7 +155,7 @@ get_rough_chart(g2, options)
 
 _A couple lines of code can add a humanistic style to a graph_  
 
-
+<img style="margin:40px 0 20px 0;" src="https://raw.githubusercontent.com/nikbearbrown/Google_Colab/master/QDH/graphs/QDH_ggrough.png" /> 
 ## Quantitive Data Humanism Parameters
 
 I will use the following parameters to extend ggpolt plots with varying degrees of sketchiness.
@@ -206,6 +209,9 @@ The `angle_noise` is a value between `0` and `1`, equivalent to the percentage o
 
 The default is `0`.
 
+
+<img style="margin:40px 0 20px 0;" src="https://raw.githubusercontent.com/nikbearbrown/Google_Colab/master/QDH/graphs/QDH_Paramters.png" /> 
+
 ## Gallery
 
 For the rest of this article I will show the effect of the parameters on common EDA graphs and not the code details of how the graphs where created. The toolset needs to be updated, refactored and rebuilt in order to make it easy for data visualization in R and python to manipulate the following parameters: fill_style, fill_weight, roughness, bowing, gap, gap_noise, angle, and angle_noise. Potentially many other parameters could be added. In 1984, Cleveland and his colleague Robert McGill published the seminal paper that created a general hierarchy for the types of data people most accurately understand:
@@ -222,6 +228,9 @@ Creating QDH libraries for R and python allow designers much more control over s
 See [Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods
 William S. Cleveland and Robert McGill
 ](https://www.jstor.org/stable/2288400)   
+
+
+<img style="margin:40px 0 20px 0;" src="https://raw.githubusercontent.com/nikbearbrown/Google_Colab/master/QDH/graphs/QDH_Long_Banner.png" /> 
 
 
 ## Poke Theme
@@ -265,7 +274,7 @@ plot.title = element_text(family = "gochi", size=14, face="bold.italic"),
 axis.title.x = element_text(family = "gochi", size=14, face="bold"),
 axis.title.y = element_text(family = "gochi", size=14, face="bold")
 )  
-ggsave(file="g3.svg")
+# ggsave(file="g3.svg")
 g3
 ```
 
@@ -281,15 +290,12 @@ font_add_google("Schoolbell", "bell")
 fface<-"bell"
 g5<-pokemon %>% 
   ggplot(aes(x =Defense, y = Attack)) +
-
   geom_point(aes(color = as.factor(Generation), shape = Legendary), size = 5, stroke = 1.5, alpha = 0.5) +
   theme_classic() +
   labs(x = "Defense", y = "Attack", title = "Basic Plot", color = "Generation", shape = "Legendary",
        subtitle = "Scatter Plot", caption = "Kaggle:Pokemon Dataset") +
-
   poke_theme +
   scale_color_manual(values = colorsKids) +
-
   scale_x_continuous(breaks = seq(0, 250, 25)) +
   scale_y_continuous(breaks = seq(0, 200, 25)) + 
    theme(
@@ -299,7 +305,7 @@ axis.title.y = element_text(family = fface, size=14, face="bold")
 )  
 g5
 
-ggsave(file="g5QDH.svg")
+# ggsave(file="g5QDH.svg")
 ```
 
  
@@ -334,7 +340,7 @@ axis.title.x = element_text(family = fface, size=14, face="bold"),
 axis.title.y = element_text(family = fface, size=14, face="bold")
 )  
 g9
-ggsave(file="g9QDH.svg")
+# ggsave(file="g9QDH.svg")
 ```
  
  _Pokemon special attack versus HP is mostly uncorrelated_
@@ -360,7 +366,7 @@ axis.title.x = element_text(family = fface, size=14, face="bold"),
 axis.title.y = element_text(family = fface, size=14, face="bold")
 )  
 g12
-ggsave(file="g12QDH.svg")
+# ggsave(file="g12QDH.svg")
 ```
  
  
@@ -383,7 +389,7 @@ axis.title.x = element_text(family = fface, size=14, face="bold"),
 axis.title.y = element_text(family = fface, size=14, face="bold")
 )  
 g16
-ggsave(file="g16QDH.svg")
+# ggsave(file="g16QDH.svg")
 ```
  
  _There are some significantly better Pokemon primary types than others_
